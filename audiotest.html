@@ -106,7 +106,7 @@
             text-indent: 2em;
             font-size: 14px;
             line-height:1.4;">
-<meta property="og:updated_time" content="2016-08-15T09:39:26.000Z">
+<meta property="og:updated_time" content="2016-08-15T09:40:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Thestral">
 <meta name="twitter:description" content="Audio Test
@@ -289,7 +289,7 @@
         　据了解，7月16日，微信公众号“中国式领导人”推送题为“【爆料】宝龙新乡社区午夜枪击”的消息，公众号负责人职某在该消息所提及案件尚处侦查阶段期间，臆断案件情节，夸大案件事实，散布不实信息，引起社会公众的恐慌，造成了不良的社会影响，被新乡市公安局洪门分局依法惩处。⑧（金水河客户端记者 代娟）
     </div>
     <script>
-        function createAudio() {
+        function createAudio(id) {
             var audio = document.createElement('audio');
             audio.src = 'uploads/audio-sjb-' + id + '.mp3';
 //            audio.addEventListener('timeupdate',function() {
@@ -310,7 +310,8 @@
         $(function() {
 
             $(document).one('touchstart',function() {
-                var audioObj = createAudio();
+                var audioObj = createAudio(1);
+                console.log(audioObj);
                 audioObj.load();
                 audioObj.play();
             })
