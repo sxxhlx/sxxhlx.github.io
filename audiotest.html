@@ -106,7 +106,7 @@
             text-indent: 2em;
             font-size: 14px;
             line-height:1.4;">
-<meta property="og:updated_time" content="2016-08-15T08:44:37.000Z">
+<meta property="og:updated_time" content="2016-08-15T08:50:16.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Thestral">
 <meta name="twitter:description" content="Audio Test
@@ -299,14 +299,15 @@
             });
             audio.addEventListener('play',function() {
                 setCurrentContent(id);
-            })
+            });
+            return audio;
         }
         function setCurrentContent(id) {
             $('.audio-msg').removeClass('current');
             $('#audio-msg-' + id).addClass('current');
         }
         $(function() {
-            createAudio(1);
+            createAudio(1).play();
         })
     </script>
 </body>
