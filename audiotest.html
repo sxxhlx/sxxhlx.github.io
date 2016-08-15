@@ -106,7 +106,7 @@
             text-indent: 2em;
             font-size: 14px;
             line-height:1.4;">
-<meta property="og:updated_time" content="2016-08-15T08:50:16.000Z">
+<meta property="og:updated_time" content="2016-08-15T09:08:35.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Thestral">
 <meta name="twitter:description" content="Audio Test
@@ -293,8 +293,8 @@
             var audio = document.createElement('audio');
             audio.src = 'uploads/audio-sjb-' + id + '.mp3';
             audio.addEventListener('timeupdate',function() {
-                if (audio.currentTime / audio.duration > 0.8) {
-                    createAudio(parseInt(id) + 1);
+                if (audio.currentTime == audio.duration) {
+                    createAudio(parseInt(id) + 1).play();
                 }
             });
             audio.addEventListener('play',function() {
@@ -307,7 +307,10 @@
             $('#audio-msg-' + id).addClass('current');
         }
         $(function() {
-            createAudio(1).play();
+
+            $(document).one('touchstart',function() {
+                createAudio(1).play();
+            })
         })
     </script>
 </body>
