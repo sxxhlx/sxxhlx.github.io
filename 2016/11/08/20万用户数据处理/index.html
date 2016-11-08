@@ -84,13 +84,19 @@
 
 
 
+<meta name="description" content="最近接到需求，要对20万个手机号进行归属地分析，由于原始数据都是txt文件，还是一行一个手机号，所以考虑使用python处理，再加上百度的免费api没有js方法，所以最终使用python的http request来跑。百度的api是个坑，这个稍后再说。
+一开始把问题想得太简单了，因为考虑到20万并不是一个很大的数目，想着写一个脚本，开10个console就好，毕竟之前拉某个app的10万用户数据也">
 <meta property="og:type" content="article">
-<meta property="og:title" content="智能设备们">
-<meta property="og:url" content="http://thestral.l-blog.me/2016/08/13/智能设备们/index.html">
+<meta property="og:title" content="20万用户数据处理">
+<meta property="og:url" content="http://thestral.l-blog.me/2016/11/08/20万用户数据处理/index.html">
 <meta property="og:site_name" content="Thestral">
-<meta property="og:updated_time" content="2016-08-13T03:18:56.000Z">
+<meta property="og:description" content="最近接到需求，要对20万个手机号进行归属地分析，由于原始数据都是txt文件，还是一行一个手机号，所以考虑使用python处理，再加上百度的免费api没有js方法，所以最终使用python的http request来跑。百度的api是个坑，这个稍后再说。
+一开始把问题想得太简单了，因为考虑到20万并不是一个很大的数目，想着写一个脚本，开10个console就好，毕竟之前拉某个app的10万用户数据也">
+<meta property="og:updated_time" content="2016-11-08T15:20:21.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="智能设备们">
+<meta name="twitter:title" content="20万用户数据处理">
+<meta name="twitter:description" content="最近接到需求，要对20万个手机号进行归属地分析，由于原始数据都是txt文件，还是一行一个手机号，所以考虑使用python处理，再加上百度的免费api没有js方法，所以最终使用python的http request来跑。百度的api是个坑，这个稍后再说。
+一开始把问题想得太简单了，因为考虑到20万并不是一个很大的数目，想着写一个脚本，开10个console就好，毕竟之前拉某个app的10万用户数据也">
 
 
 
@@ -111,9 +117,9 @@
 
 
 
-  <link rel="canonical" href="http://thestral.l-blog.me/2016/08/13/智能设备们/"/>
+  <link rel="canonical" href="http://thestral.l-blog.me/2016/11/08/20万用户数据处理/"/>
 
-  <title> 智能设备们 | Thestral </title>
+  <title> 20万用户数据处理 | Thestral </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -233,7 +239,7 @@
             
             
               
-                智能设备们
+                20万用户数据处理
               
             
           </h1>
@@ -245,8 +251,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-13T11:03:09+08:00" content="2016-08-13">
-              2016-08-13
+            <time itemprop="dateCreated" datetime="2016-11-08T22:49:54+08:00" content="2016-11-08">
+              2016-11-08
             </time>
           </span>
 
@@ -273,7 +279,20 @@
       
 
       
-        
+        <p>最近接到需求，要对20万个手机号进行归属地分析，由于原始数据都是txt文件，还是一行一个手机号，所以考虑使用python处理，再加上百度的免费api没有js方法，所以最终使用python的http request来跑。百度的api是个坑，这个稍后再说。</p>
+<p>一开始把问题想得太简单了，因为考虑到20万并不是一个很大的数目，想着写一个脚本，开10个console就好，毕竟之前拉某个app的10万用户数据也没用多长时间。结果跑了一晚上才跑出来几千条。第二天到了办公室被领导痛批，你丫就不能先把手机号前七位拉出来分个组？</p>
+<p>好的，写另外一个python脚本，把20万手机号按前七位分组，写到一个数组里，然后写另一个脚本，依次读取数组中每一个元素，补全11位之后向百度请求。将返回的结果存储到另一个数组中。这时候问题来了，python的list不支持object元素…</p>
+<p>考虑再三并查文档后发现，以我浅薄的python知识储备并不能完美处理这个list。所以写js，遍历上一个步骤生成的json，取其中的<strong>prefix</strong>字段作为key-value的key，将原json数组中的元素作为value，生成新的json数据，保存成文件后是标准的python dict。</p>
+<p>写新的python脚本，将原始数据与dict对比，如果line的前七位匹配到dict中的某个元素的key，则将此元素取出，将其中的<strong>phone</strong>替换为line，并append到新的数组中，最后生成最终result json文件交后台同学导入数据库。</p>
+<p>至此，这个流程是没有什么问题的，但是运行过程中发现丢失大量数据，虽然在getlocation.py中加了错误判断和空值判断，但是由于前期并没有留出来时间测试百度api的稳定性，造成了数据丢失。丢失一个数据就会出现分辨不出大批手机号归属地的情况。</p>
+<p>无奈之下，写另一个python脚本，将原始数据与result对比，如果原始数据中的某一line匹配不到最终结果，则写入missed文件中，重新进行分组处理。再加上后台同学把数据导入redis的过程中不知道为啥也可能丢失数据，所以查漏补缺的步骤进行了无数遍…. </p>
+<p>在数据剩余量很少的时候，发现请求百度api丢数据太严重，就又重新找了别家的api，但是api返回的数据字段、格式跟之前的不一样。于是又写了新的js把新api生成的result处理成之前的格式方便后台同学使用。在使用新api的时候，发现百度的api完全就是个渣渣啊！说好的一秒钟不能超过200次，我凑你丫5-10秒才给返回一个数据好么！</p>
+<p>最后算是完全导入了。回顾整个过程，发现还是少了预先完整测试的步骤，也没有整个的统筹考虑思维。另外也是对python并不熟悉，其实应该可以直接写一个class从头到位完整处理数据，这个是下一步要学习的内容。</p>
+<p>最终数据导入redis后，后台同学写api供我获取按地市分布的用户数量，展示到页面上。此处使用了百度echarts的map，但是发现并不能直观看出来地市用户的排行。果然炫技是没什么鸟用的，最后还是老老实实写了另外一个table放上去。另加了tablesorter插件方便排序。</p>
+<p>至此基本需求完成。</p>
+<p>复盘是一个很有意思的事情，只是最近天太特么冷了，在书房写这个复盘过程的功夫爪子都已经成了冰。</p>
+<p>嗯，一切弄完之后我去杭州浪了一圈，杭州真是一个美好的城市啊… </p>
+
       
     </div>
 
@@ -298,17 +317,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/08/13/丢/" rel="next" title="丢">
-                <i class="fa fa-chevron-left"></i> 丢
+              <a href="/2016/10/08/想说却还没说的/" rel="next" title="想说却还没说的">
+                <i class="fa fa-chevron-left"></i> 想说却还没说的
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/08/18/javascript数组操作/" rel="prev" title="javascript数组操作">
-                javascript数组操作 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
